@@ -9,8 +9,8 @@ class InItemSerializer(serializers.ModelSerializer):
         model = InItem
         fields = [
             "id",
-            "name",
             "description",
+            "processed",
             "created_date",
             "updated_date"
         ]

@@ -1,3 +1,4 @@
 from django.contrib import admin
+from stuff.models import InItem
 
-# Register your models here.
+admin.site.register(InItem)
