@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from stuff.permissions import IsAuthorOrFuckOff
+from rest_framework import status
 
 
 from stuff.models import InItem
@@ -26,7 +27,7 @@ class InItemListApiView(APIView):
     
     def get(self, request):
         in_items = InItem.objects.filter(author=request.user)
-        serializer = InItemSerializer(in_items, manu=True)
+        serializer = InItemSerializer(in_items, many=True)
         return Response(serializer.data)
 
     def post(self, request):
@@ -34,4 +35,4 @@ class InItemListApiView(APIView):
         if serializer.is_valid():
             serializer.save(author=request.user)
             return Response(serializer.data)
-        return Response(serializer.errors, status=Http404)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
