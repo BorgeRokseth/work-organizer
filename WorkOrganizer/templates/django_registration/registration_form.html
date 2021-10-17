@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<h3> Create Work Organizer Account </h3>
+<h3> Create your WorkOrganizer Account </h3>
 <div class="registration-form-container">
     <form method="POST">
         {% csrf_token %}
@@ -11,5 +11,6 @@
             Create Account
         </button>
     </form>
+    <p class="mt-2"> Or <a href="{% url 'login' %}">Login</a></p>
 </div>
 {% endblock %}

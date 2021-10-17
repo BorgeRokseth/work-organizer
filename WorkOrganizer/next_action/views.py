@@ -18,7 +18,7 @@ class NextActionDetailApiView(APIView):
     permission_classes = [IsAuthenticated, IsAuthorOrFuckOff]
 
     def get_object(self, pk):
-        return get_object_or_404(InItem, pk=pk)
+        return get_object_or_404(NextAction, pk=pk)
     
     def get(self, request, pk):
         next_action = self.get_object(pk=pk)
@@ -27,7 +27,7 @@ class NextActionDetailApiView(APIView):
 
     def put(self, request, pk):
         next_action = self.get_object(pk=pk)
-        serializer = NextActionSerializer(next_action, data=request.data['content'])
+        serializer = NextActionSerializer(next_action, data=request.data)
         if serializer.is_valid():
             serializer.save(author=request.user)
             return Response(serializer.data)

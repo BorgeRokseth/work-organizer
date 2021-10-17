@@ -22,6 +22,14 @@ class InItemDetailApiView(APIView):
         serializer = InItemSerializer(in_item)
         return Response(serializer.data)
 
+    def put(self, request, pk):
+        in_item = self.get_object(pk=pk)
+        serializer = InItemSerializer(in_item, data=request.data['content'])
+        if serializer.is_valid():
+            serializer.save(author=request.user)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class InItemListApiView(APIView):
     permission_classes = [IsAuthenticated, IsAuthorOrFuckOff]
     
