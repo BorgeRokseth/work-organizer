@@ -30,6 +30,11 @@ class InItemDetailApiView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, pk):
+        in_item = self.get_object(pk)
+        in_item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class InItemListApiView(APIView):
     permission_classes = [IsAuthenticated, IsAuthorOrFuckOff]
     
@@ -39,7 +44,7 @@ class InItemListApiView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = InItem(data=request.data['content'])
+        serializer = InItemSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(author=request.user)
             return Response(serializer.data)
