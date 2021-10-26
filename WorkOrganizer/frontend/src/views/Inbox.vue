@@ -66,6 +66,7 @@ export default {
   },
   methods: {
     getInboxItems() {
+      console.log("Get inbox item")
       const endpoint = "/api/stuff/";
       apiService(endpoint).then((data) => {
         this.inboxItems = data;
@@ -74,7 +75,7 @@ export default {
     deleteInboxItem(id) {
       const endpoint = `/api/stuff/${id}/`;
       const method = "DELETE";
-      apiService(endpoint, method).then(this.getInboxItems());
+      apiService(endpoint, method).then(() => this.getInboxItems());
     },
     addNewInboxItem() {
       const data = {
@@ -82,7 +83,7 @@ export default {
       };
       const endpoint = "/api/stuff/";
       const method = "POST";
-      apiService(endpoint, method, data).then(this.getInboxItems());
+      apiService(endpoint, method, data).then(() => this.getInboxItems());
       this.newInboxItemDescription = "";
     },
   },
