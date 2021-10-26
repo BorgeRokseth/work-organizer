@@ -66,6 +66,7 @@ export default {
   },
   methods: {
     getInboxItems() {
+      console.log("Get inbox item")
       const endpoint = "/api/stuff/";
       apiService(endpoint).then((data) => {
         this.inboxItems = data;

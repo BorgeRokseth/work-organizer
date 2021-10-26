@@ -14,6 +14,9 @@
 /*.egg-info/
 /env/
 /venv/
+/WorkOrganizer/db.sqlite3/
+/WorkOrganizer/venv
+/WorkOrganizer/db.sqlite3
 MANIFEST
 coverage.*
 
