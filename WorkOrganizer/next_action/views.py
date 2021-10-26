@@ -47,3 +47,14 @@ class NextActionListApiView(APIView):
             serializer.save(author=request.user)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ContextListApiView(APIView):
+    permission_classes = [IsAuthenticated, IsAuthorOrFuckOff]
+    
+    def get(self, request):
+        print("hei")
+        contexts = Context.objects.filter(author=request.user)
+        serializer = ContextSerializer(contexts, many=True)
+        return Response(serializer.data)
+

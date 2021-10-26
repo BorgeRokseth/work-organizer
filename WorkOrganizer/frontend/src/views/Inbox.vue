@@ -74,7 +74,7 @@ export default {
     deleteInboxItem(id) {
       const endpoint = `/api/stuff/${id}/`;
       const method = "DELETE";
-      apiService(endpoint, method).then(this.getInboxItems());
+      apiService(endpoint, method).then(() => this.getInboxItems());
     },
     addNewInboxItem() {
       const data = {
@@ -82,8 +82,15 @@ export default {
       };
       const endpoint = "/api/stuff/";
       const method = "POST";
-      apiService(endpoint, method, data).then(this.getInboxItems());
+      apiService(endpoint, method, data).then(() => this.getInboxItems());
       this.newInboxItemDescription = "";
+    },
+    getUserDetails() {
+      const endpoint = "/api/user/";
+      apiService(endpoint).then(data => {
+        this.user = data.username;
+        this.userId = data.id;
+      });
     },
   },
   created() {
