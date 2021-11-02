@@ -42,7 +42,7 @@ class NextActionListApiView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = NextAction(data=request.data['content'])
+        serializer = NextActionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(author=request.user)
             return Response(serializer.data)
@@ -58,3 +58,17 @@ class ContextListApiView(APIView):
         serializer = ContextSerializer(contexts, many=True)
         return Response(serializer.data)
 
+class ActiveProjectListApiView(APIView):
+    permission_classes = [IsAuthenticated, IsAuthorOrFuckOff]
+    
+    def get(self, request):
+        projects = Project.objects.filter(author=request.user).filter(done=False)
+        serializer = ProjectSerializer(projects, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = ProjectSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(author=request.user)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

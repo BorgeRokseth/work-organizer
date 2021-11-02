@@ -26,8 +26,8 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
-            "goal"
-            "actions"
+            "goal",
+            "actions",
             "done",
             "created",
             "author"
