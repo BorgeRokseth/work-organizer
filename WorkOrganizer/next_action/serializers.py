@@ -20,6 +20,7 @@ class NextActionSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False, read_only=True)
     author = serializers.StringRelatedField(read_only=True)
+    actions = NextActionSerializer(many=True, read_only=True)
 
     class Meta:
         model = Project

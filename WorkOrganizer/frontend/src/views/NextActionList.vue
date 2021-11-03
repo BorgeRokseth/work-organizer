@@ -1,30 +1,32 @@
 <template>
-  <div>
-    <v-expansion-panels dark>
+  <v-col>
+    <v-expansion-panels>
       <v-expansion-panel v-for="item in contextItems" :key="item.id">
-        <v-expansion-panel-header>{{ item.name }}</v-expansion-panel-header>
+        <v-expansion-panel-header><h2>{{ item.name }}</h2></v-expansion-panel-header>
         <v-expansion-panel-content>
-          <v-expansion-panels>
+          <v-expansion-panels dark>
             <v-expansion-panel
               v-for="project in activeProjects"
-              :key="project.id"
+              :key="project.id" popout dark
             >
               <v-expansion-panel-header
-                v-if="projectHasActionWithContext(project, item.id)"
-                >{{ project.name }}</v-expansion-panel-header
+                v-if="projectHasActionWithContext(project, item.id)" 
+                ><h3>{{ project.name }}</h3></v-expansion-panel-header
               >
               <v-expansion-panel-content
                 v-for="action in project.actions"
-                :key="action"
+                :key="action.id"
               >
-                {{ action }}
+                <div v-if="actionBelongsToContext(action, item.id)">
+                  {{ action.description }}
+                </div>
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-expansion-panels>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-  </div>
+  </v-col>
 </template>
 
 <script>
@@ -36,7 +38,7 @@ export default {
     return {
       contextItems: [],
       activeProjects: [],
-      nextAction: null,
+      nextActions: [],
     };
   },
   methods: {
@@ -54,23 +56,28 @@ export default {
         this.activeProjects = data;
       });
     },
-    getNextActionItem(id) {
-      const endpoint = `/api/next-actions/next-actions/${id}/`;
+    getNextActions() {
+      const endpoint = "/api/next-actions/next-actions/";
       const method = "GET";
       apiService(endpoint, method).then((data) => {
-        this.nextAction = data;
+        this.nextActions = data;
       });
     },
     projectHasActionWithContext(project, context) {
-      console.log("Context: ", context);
-      console.log("Project: ", project.name);
-      for (const actionId of project.actions) {
-        this.getNextActionItem(actionId);
-        if (this.nextAction !== undefined){
-            console.log("Action ID: ", this.nextAction);
+      let hasActionWithContext = false;
+      for (const action of project.actions) {
+        if (action.context === context) {
+          hasActionWithContext = true;
         }
       }
-      return true;
+      return hasActionWithContext;
+    },
+    actionBelongsToContext(action, context) {
+      if (action.context === context) {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
   created() {
