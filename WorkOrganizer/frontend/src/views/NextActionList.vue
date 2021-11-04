@@ -1,32 +1,64 @@
 <template>
-  <v-col>
-    <v-expansion-panels>
-      <v-expansion-panel v-for="item in contextItems" :key="item.id">
-        <v-expansion-panel-header><h2>{{ item.name }}</h2></v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <v-expansion-panels dark>
-            <v-expansion-panel
-              v-for="project in activeProjects"
-              :key="project.id" popout dark
-            >
-              <v-expansion-panel-header
-                v-if="projectHasActionWithContext(project, item.id)" 
-                ><h3>{{ project.name }}</h3></v-expansion-panel-header
-              >
-              <v-expansion-panel-content
-                v-for="action in project.actions"
+  <v-container>
+    <h2>Next actions</h2>
+    <v-card v-for="context in contextItems" :key="context.id" class="mt-2">
+      <v-card-title>{{ context.name }}</v-card-title>
+      <v-card-text>
+        <v-simple-table dark>
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th class="text-left">Description</th>
+                <th class="text-left">Project</th>
+                <th class="text-left">Date</th>
+                <th class="text-left">Done</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="action in nextActiveActionByContext(context.id)"
                 :key="action.id"
               >
-                <div v-if="actionBelongsToContext(action, item.id)">
-                  {{ action.description }}
-                </div>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-expansion-panels>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
-  </v-col>
+                <td>{{ action.description }}</td>
+                <td>{{ action.project[0] }}</td>
+                <td>{{ action.created }}</td>
+                <td>
+                  <v-icon
+                    small
+                    @click="
+                      deleteNextAction(
+                        action.id,
+                        action.description,
+                        action.project[0],
+                        context.id
+                      )
+                    "
+                  >
+                    mdi-check-outline
+                  </v-icon>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <v-text-field
+                    label="New Next Action"
+                    v-model="newActionDescription"
+                  ></v-text-field>
+                </td>
+                <td>proj yes?</td>
+                <td>-</td>
+                <td>
+                  <v-icon small @click="newNextAction(context.id)">
+                    mdi-plus-box
+                  </v-icon>
+                </td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
 
 <script>
@@ -39,6 +71,9 @@ export default {
       contextItems: [],
       activeProjects: [],
       nextActions: [],
+      newActionDescription: "",
+      editedProjectData: null,
+      newActionProjectId: 2,
     };
   },
   methods: {
@@ -63,26 +98,64 @@ export default {
         this.nextActions = data;
       });
     },
-    projectHasActionWithContext(project, context) {
-      let hasActionWithContext = false;
-      for (const action of project.actions) {
-        if (action.context === context) {
-          hasActionWithContext = true;
+    nextActiveActionByContext(contextId) {
+      const listOfActions = [];
+      for (const action of this.nextActions) {
+        if (action.context === contextId && action.done !== true) {
+          listOfActions.push(action);
         }
       }
-      return hasActionWithContext;
+      return listOfActions;
     },
-    actionBelongsToContext(action, context) {
-      if (action.context === context) {
-        return true;
-      } else {
-        return false;
-      }
+    deleteNextAction(id, description, project, contextId) {
+      const endpoint = `/api/next-actions/next-actions/${id}/`;
+      const method = "PUT";
+      const data = {
+        description: description,
+        context: contextId,
+        done: true,
+      };
+      apiService(endpoint, method, data).then(() => this.getNextActions());
+    },
+    newNextAction(contextId) {
+      const endpoint = "/api/next-actions/next-actions/";
+      const method = "POST";
+      const data = {
+        description: this.newActionDescription,
+        context: contextId,
+        done: false,
+      };
+      this.newActionDescription = "";
+      apiService(endpoint, method, data).then((data) => {
+        if (this.newActionProjectId !== null) {
+          this.updateProject(data);
+        }
+        this.newActionDescription = "";
+      });
+    },
+    updateProject(newNextAction) {
+      const endpoint = `/api/next-actions/project/${this.newActionProjectId}/`;
+      apiService(endpoint, "GET").then((data) => {
+        this.editedProjectData = data;
+        let actionIsNotInProject = true;
+        for (const action of this.editedProjectData.actions) {
+          if (action.id === newNextAction.id) {
+            actionIsNotInProject = false;
+          }
+        }
+        if (actionIsNotInProject) {
+          this.editedProjectData.actions.push(newNextAction);
+        }
+        apiService(endpoint, "PUT", this.editedProjectData).then(
+          () => this.getNextActions
+        );
+      });
     },
   },
   created() {
     this.getContextItems();
     this.getActiveProjects();
+    this.getNextActions();
   },
 };
 </script>

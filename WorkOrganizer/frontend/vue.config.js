@@ -7,7 +7,7 @@ module.exports = {
   publicPath: "http://127.0.0.1:8080/",
   outputDir: "./dist/",
 
-  chainWebpack: config => {
+  chainWebpack: (config) => {
     config
       .plugin("BundleTracker")
       .use(BundleTracker, [{ filename: "./webpack-stats.json" }]);
@@ -28,7 +28,7 @@ module.exports = {
       .https(false)
       .disableHostCheck(true)
       .headers({ "Access-Control-Allow-Origin": ["*"] });
-  }
+  },
 
   // uncomment before executing 'npm run build'
   // css: {
@@ -38,8 +38,3 @@ module.exports = {
   //     },
   // }
 };
-
-
-
-
-  

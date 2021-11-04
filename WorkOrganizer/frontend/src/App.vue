@@ -20,26 +20,25 @@ import { apiService } from "@/common/api.service";
 export default {
   name: "App",
   components: {
-    NavBar
+    NavBar,
   },
   data() {
     return {
       drawer: { open: false },
-      user: " "
+      user: " ",
     };
   },
 
   methods: {
     getUserDetails() {
       const endpoint = "/api/user/";
-      apiService(endpoint).then(data => {
+      apiService(endpoint).then((data) => {
         this.user = data.username;
       });
-    }
+    },
   },
   created() {
     this.getUserDetails();
-  }
+  },
 };
 </script>
-

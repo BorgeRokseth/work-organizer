@@ -28,9 +28,9 @@ export default Vue.extend({
       menuItems: [
         { text: "Inbox", icon: `mdi-folder-download`, link: "/inbox" },
         { text: "Next Actions", icon: `mdi-play-circle`, link: "/next-action" },
-      ]
+      ],
     };
-  }
+  },
 });
 </script>
 <style scoped></style>

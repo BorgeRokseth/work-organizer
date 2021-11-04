@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     getInboxItems() {
-      console.log("Get inbox item")
+      console.log("Get inbox item");
       const endpoint = "/api/stuff/";
       apiService(endpoint).then((data) => {
         this.inboxItems = data;
@@ -88,7 +88,7 @@ export default {
     },
     getUserDetails() {
       const endpoint = "/api/user/";
-      apiService(endpoint).then(data => {
+      apiService(endpoint).then((data) => {
         this.user = data.username;
         this.userId = data.id;
       });
