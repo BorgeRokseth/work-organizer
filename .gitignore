@@ -17,7 +17,7 @@
 /WorkOrganizer/db.sqlite3/
 /WorkOrganizer/venv
 /WorkOrganizer/db.sqlite3
-db.sqlite3
+/db.sqlite3
 MANIFEST
 coverage.*
 
