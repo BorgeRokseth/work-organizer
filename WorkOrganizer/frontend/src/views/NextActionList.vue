@@ -20,7 +20,7 @@
                 :key="action.id"
               >
                 <td>{{ action.description }}</td>
-                <td>{{ action.project }}</td>
+                <td>{{ getProjectName(action) }}</td>
                 <td>{{ action.created }}</td>
                 <td>
                   <v-icon
@@ -45,7 +45,15 @@
                     v-model="newActionDescription"
                   ></v-text-field>
                 </td>
-                <td>put in v-select</td>
+                <td>
+                  <v-select
+                    :items="activeProjects"
+                    item-text="name"
+                    item-value="id"
+                    label="Project"
+                    v-model="newActionProject"
+                  ></v-select>
+                </td>
                 <td>-</td>
                 <td>
                   <v-icon small @click="newNextAction(context.id)">
@@ -73,7 +81,7 @@ export default {
       nextActions: [],
       newActionDescription: "",
       editedProjectData: null,
-      newActionProjectId: 2,
+      newActionProject: null,
     };
   },
   methods: {
@@ -89,6 +97,7 @@ export default {
       const method = "GET";
       apiService(endpoint, method).then((data) => {
         this.activeProjects = data;
+        this.activeProjects.push({id:null, name:""})
       });
     },
     getNextActions() {
@@ -123,13 +132,19 @@ export default {
       const data = {
         description: this.newActionDescription,
         context: contextId,
-        project: 2,
+        project: this.newActionProject,
         done: false,
       };
-      apiService(endpoint, method, data).then(() =>{
+      apiService(endpoint, method, data).then(() => {
         this.getNextActions();
         this.newActionDescription = "";
       });
+    },
+    getProjectName(action) {
+      if (action.project === null) {
+        return "";
+      }
+      return action.project;
     },
   },
   created() {
