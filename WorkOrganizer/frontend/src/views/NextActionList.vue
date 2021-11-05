@@ -20,7 +20,7 @@
                 :key="action.id"
               >
                 <td>{{ action.description }}</td>
-                <td>{{ action.project[0] }}</td>
+                <td>{{ action.project }}</td>
                 <td>{{ action.created }}</td>
                 <td>
                   <v-icon
@@ -45,7 +45,7 @@
                     v-model="newActionDescription"
                   ></v-text-field>
                 </td>
-                <td>proj yes?</td>
+                <td>put in v-select</td>
                 <td>-</td>
                 <td>
                   <v-icon small @click="newNextAction(context.id)">
@@ -123,32 +123,12 @@ export default {
       const data = {
         description: this.newActionDescription,
         context: contextId,
+        project: 2,
         done: false,
       };
-      this.newActionDescription = "";
-      apiService(endpoint, method, data).then((data) => {
-        if (this.newActionProjectId !== null) {
-          this.updateProject(data);
-        }
+      apiService(endpoint, method, data).then(() =>{
+        this.getNextActions();
         this.newActionDescription = "";
-      });
-    },
-    updateProject(newNextAction) {
-      const endpoint = `/api/next-actions/project/${this.newActionProjectId}/`;
-      apiService(endpoint, "GET").then((data) => {
-        this.editedProjectData = data;
-        let actionIsNotInProject = true;
-        for (const action of this.editedProjectData.actions) {
-          if (action.id === newNextAction.id) {
-            actionIsNotInProject = false;
-          }
-        }
-        if (actionIsNotInProject) {
-          this.editedProjectData.actions.push(newNextAction);
-        }
-        apiService(endpoint, "PUT", this.editedProjectData).then(
-          () => this.getNextActions
-        );
       });
     },
   },
