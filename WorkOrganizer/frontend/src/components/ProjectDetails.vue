@@ -19,6 +19,7 @@
           ></v-textarea>
           <v-list>
             <v-header>Actions</v-header>
+            <v-icon small> mdi-plus-box </v-icon>
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title
