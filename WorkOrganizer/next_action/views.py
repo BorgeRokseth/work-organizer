@@ -8,7 +8,7 @@ from stuff.permissions import IsAuthorOrFuckOff
 from rest_framework import status
 
 from next_action.models import Project, Context, NextAction
-from next_action.serializers import NextActionSerializer, ProjectSerializer, ContextSerializer
+from next_action.serializers import NextActionSerializer, NextActionReadSerializer, ProjectSerializer, ContextSerializer
 
 
 
@@ -39,7 +39,7 @@ class NextActionListApiView(APIView):
     
     def get(self, request):
         next_actions = NextAction.objects.filter(author=request.user)
-        serializer = NextActionSerializer(next_actions, many=True)
+        serializer = NextActionReadSerializer(next_actions, many=True)
         return Response(serializer.data)
 
     def post(self, request):
@@ -54,7 +54,6 @@ class ContextListApiView(APIView):
     permission_classes = [IsAuthenticated, IsAuthorOrFuckOff]
     
     def get(self, request):
-        print("hei")
         contexts = Context.objects.filter(author=request.user)
         serializer = ContextSerializer(contexts, many=True)
         return Response(serializer.data)
